@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teleprompter Pro</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  /* CONTENEDOR PRINCIPAL */
+  #pantalla {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    text-align: center;
+    padding: 20px;
+  }
+
+  /* TEXTO */
+  #texto {
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .linea {
+    opacity: 0.3;
+    font-size: clamp(20px, 4vw, 40px);
+    margin: 10px 0;
+    transition: all 0.3s ease;
+  }
+
+  .activa {
+    opacity: 1;
+    color: lime;
+    font-size: clamp(28px, 6vw, 60px);
+    font-weight: bold;
+  }
+
+  /* CONTROLES ABAJO */
+  #controles {
+    background: #111;
+    padding: 10px;
+    text-align: center;
+  }
+
+  button {
+    padding: 10px 15px;
+    margin: 5px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+
+  input {
+    width: 80px;
+    text-align: center;
+    font-size: 16px;
+  }
+</style>
+
+</head>
+<body>
+
+<div id="pantalla">
+  <div id="texto"></div>
+</div>
+
+<div id="controles">
+  <button onclick="iniciar()">▶ Iniciar</button>
+  <button onclick="pausar()">⏸ Pausar</button>
+  <button onclick="reiniciar()">🔄 Reiniciar</button>
+  Velocidad(ms): <input type="number" id="velocidad" value="800">
+</div>
+
+<script>
+
+const texto = `Buenos días.  
+Hoy les  
+presentaré el  
+modelado de  
+negocio del  
+restaurante El  
+Sabor de  
+la Olla,  
+el cual  
+está enfocado  
+en mejorar  
+el proceso  
+de entrega  
+de raciones  
+a comensales  
+institucionales.  
+
+Para comenzar,  
+es importante  
+entender que  
+el modelado  
+de negocio  
+nos permite  
+analizar de  
+manera integral  
+cómo funciona  
+actualmente el  
+servicio.  
+
+Gracias a  
+este análisis,  
+podemos identificar  
+los principales  
+problemas que  
+afectan la  
+operación diaria  
+y plantear  
+una solución  
+más eficiente.  
+
+En primer  
+lugar, hablaremos  
+del modelado  
+del proceso  
+de negocio  
+actual.  
+
+Actualmente, el  
+restaurante maneja  
+un proceso  
+completamente manual,  
+lo que  
+genera diversas  
+ineficiencias.  
+
+El flujo  
+inicia cuando  
+el comensal  
+llega al  
+establecimiento.  
+
+El personal  
+de atención  
+valida manualmente  
+si está  
+autorizado, revisando  
+listas físicas.  
+
+Luego se  
+entrega la  
+ración y  
+el usuario  
+firma un  
+ticket físico.  
+
+Finalmente, el  
+administrador consolida  
+los registros  
+para la  
+facturación.  
+
+Este proceso  
+genera demoras,  
+errores, duplicidad  
+de firmas  
+y falta  
+de control  
+en tiempo  
+real.  
+
+Frente a  
+esto, se  
+propone un  
+sistema digital  
+automatizado.  
+
+Primero, la  
+institución sincroniza  
+la lista  
+de autorizados.  
+
+Luego, el  
+usuario puede  
+reservar su  
+asistencia.  
+
+Al llegar,  
+se valida  
+mediante código  
+QR.  
+
+El sistema  
+registra automáticamente  
+el consumo  
+y genera  
+reportes en  
+tiempo real.  
+
+Esto permite  
+reducir tiempos,  
+eliminar errores  
+y mejorar  
+la gestión.  
+
+En este  
+proceso intervienen  
+varios actores.  
+
+El comensal  
+institucional, el  
+personal de  
+atención, el  
+administrador, el  
+área de  
+cocina y  
+la institución  
+cliente.  
+
+Los casos  
+de uso  
+incluyen validar  
+acceso, registrar  
+consumo, gestionar  
+autorizados, generar  
+reportes y  
+planificar raciones.  
+
+Los objetivos  
+son reducir  
+errores, eliminar  
+papel, optimizar  
+tiempos y  
+garantizar transparencia.  
+
+En el  
+análisis del  
+negocio se  
+identifican trabajadores,  
+entidades y  
+procesos.  
+
+Los trabajadores  
+incluyen personal  
+de atención,  
+administrador, cocinero  
+y caja.  
+
+Las entidades  
+son usuario,  
+QR, consumo,  
+ración, reporte  
+y autorizados.  
+
+Las realizaciones  
+incluyen validación  
+QR, registro  
+automático, reportes  
+y control  
+en tiempo  
+real.  
+
+Finalmente, este  
+sistema transforma  
+el proceso  
+manual en  
+uno digital,  
+mejorando eficiencia,  
+control y  
+transparencia.  `;
+
+let lineas = texto.split("\n").filter(l => l.trim() !== "");
+let index = 0;
+let intervalo = null;
+
+function iniciar() {
+  if (intervalo) return;
+  mostrar();
+}
+
+function pausar() {
+  clearTimeout(intervalo);
+  intervalo = null;
+}
+
+function reiniciar() {
+  pausar();
+  index = 0;
+  document.getElementById("texto").innerHTML = "";
+}
+
+function mostrar() {
+  if (index >= lineas.length) return;
+
+  let contenedor = document.getElementById("texto");
+
+  // mantener máximo 5 líneas visibles
+  if (contenedor.children.length >= 5) {
+    contenedor.removeChild(contenedor.firstChild);
+  }
+
+  let div = document.createElement("div");
+  div.className = "linea";
+  div.innerText = lineas[index];
+
+  contenedor.appendChild(div);
+
+  // quitar activa anterior
+  let todas = document.querySelectorAll(".linea");
+  todas.forEach(el => el.classList.remove("activa"));
+
+  // activar última (centro visual)
+  div.classList.add("activa");
+
+  index++;
+
+  let vel = document.getElementById("velocidad").value;
+  intervalo = setTimeout(mostrar, vel);
+}
+
+</script>
+
+</body>
+</html>
