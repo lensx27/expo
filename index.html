@@ -86,195 +86,262 @@
 
 <script>
 
-const texto = `Buenos días.  
-Hoy les  
-presentaré el  
-modelado de  
-negocio del  
-restaurante El  
-Sabor de  
-la Olla,  
-el cual  
-está enfocado  
-en mejorar  
-el proceso  
-de entrega  
-de raciones  
-a comensales  
-institucionales.  
+const texto = `
+Este diagrama
+representa el
+modelo de negocio
+mediante casos
+de uso.
 
-Para comenzar,  
-es importante  
-entender que  
-el modelado  
-de negocio  
-nos permite  
-analizar de  
-manera integral  
-cómo funciona  
-actualmente el  
-servicio.  
+El sistema
+está diseñado
+para gestionar
+el servicio
+de alimentación
+en una institución.
 
-Gracias a  
-este análisis,  
-podemos identificar  
-los principales  
-problemas que  
-afectan la  
-operación diaria  
-y plantear  
-una solución  
-más eficiente.  
+Se muestra
+cómo los actores
+interactúan con
+el sistema
+y cómo sus
+acciones contribuyen
+a un objetivo
+común.
 
-En primer  
-lugar, hablaremos  
-del modelado  
-del proceso  
-de negocio  
-actual.  
+Este objetivo
+es la generación
+de reportes.
 
-Actualmente, el  
-restaurante maneja  
-un proceso  
-completamente manual,  
-lo que  
-genera diversas  
-ineficiencias.  
+En primer lugar,
+se identifican
+cuatro actores
+principales.
 
-El flujo  
-inicia cuando  
-el comensal  
-llega al  
-establecimiento.  
+El oficial,
+el recepcionista,
+el encargado
+de cocina
+y el administrador.
 
-El personal  
-de atención  
-valida manualmente  
-si está  
-autorizado, revisando  
-listas físicas.  
+Cada uno
+cumple un rol
+específico dentro
+del proceso.
 
-Luego se  
-entrega la  
-ración y  
-el usuario  
-firma un  
-ticket físico.  
+El oficial
+registra su
+reserva en
+el padrón.
 
-Finalmente, el  
-administrador consolida  
-los registros  
-para la  
-facturación.  
+También puede
+visualizar su
+ticket para
+acceder al servicio.
 
-Este proceso  
-genera demoras,  
-errores, duplicidad  
-de firmas  
-y falta  
-de control  
-en tiempo  
-real.  
+El recepcionista
+valida el
+código QR
+del ticket.
 
-Frente a  
-esto, se  
-propone un  
-sistema digital  
-automatizado.  
+Esto asegura
+que solo personas
+autorizadas
+reciban atención.
 
-Primero, la  
-institución sincroniza  
-la lista  
-de autorizados.  
+Por otro lado,
+el encargado
+de cocina
+gestiona el
+menú del día.
 
-Luego, el  
-usuario puede  
-reservar su  
-asistencia.  
+También controla
+la entrega
+de raciones.
 
-Al llegar,  
-se valida  
-mediante código  
-QR.  
+Estas acciones
+garantizan un
+servicio eficiente
+y organizado.
 
-El sistema  
-registra automáticamente  
-el consumo  
-y genera  
-reportes en  
-tiempo real.  
+Mientras tanto,
+el administrador
+cumple un rol
+más estratégico.
 
-Esto permite  
-reducir tiempos,  
-eliminar errores  
-y mejorar  
-la gestión.  
+Se encarga
+de conciliar
+la facturación.
 
-En este  
-proceso intervienen  
-varios actores.  
+Gestiona reportes
+de asistencia
+y actualiza
+el listado
+de oficiales.
 
-El comensal  
-institucional, el  
-personal de  
-atención, el  
-administrador, el  
-área de  
-cocina y  
-la institución  
-cliente.  
+Un aspecto clave
+del diagrama
+es la relación
+de inclusión.
 
-Los casos  
-de uso  
-incluyen validar  
-acceso, registrar  
-consumo, gestionar  
-autorizados, generar  
-reportes y  
-planificar raciones.  
+Esto significa
+que todos
+los procesos
+están conectados.
 
-Los objetivos  
-son reducir  
-errores, eliminar  
-papel, optimizar  
-tiempos y  
-garantizar transparencia.  
+Cada acción
+realizada en
+el sistema
+genera información.
 
-En el  
-análisis del  
-negocio se  
-identifican trabajadores,  
-entidades y  
-procesos.  
+Desde el registro
+hasta la entrega
+de raciones.
 
-Los trabajadores  
-incluyen personal  
-de atención,  
-administrador, cocinero  
-y caja.  
+Toda esta información
+se consolida
+en un reporte final.
 
-Las entidades  
-son usuario,  
-QR, consumo,  
-ración, reporte  
-y autorizados.  
+En conjunto,
+el sistema integra
+procesos operativos
+y administrativos.
 
-Las realizaciones  
-incluyen validación  
-QR, registro  
-automático, reportes  
-y control  
-en tiempo  
-real.  
+Su objetivo
+es optimizar
+la gestión
+del servicio.
 
-Finalmente, este  
-sistema transforma  
-el proceso  
-manual en  
-uno digital,  
-mejorando eficiencia,  
-control y  
-transparencia.  `;
+También mejorar
+el control
+y facilitar
+la toma
+de decisiones.
+
+Finalmente,
+se obtiene información
+centralizada
+y confiable.
+
+por otro lado
+
+Este diagrama
+corresponde a
+un diagrama
+de robustez.
+
+Está enfocado
+en el proceso
+de validación
+de un código QR.
+
+Su objetivo
+es mostrar
+cómo interactúan
+la interfaz,
+la lógica
+del sistema
+y las entidades
+de datos.
+
+El flujo inicia
+en la pantalla
+de escaneo
+de la aplicación.
+
+Esta pantalla
+representa la interfaz
+con la que
+el usuario
+interactúa.
+
+En el paso uno,
+el usuario escanea
+el código QR.
+
+La aplicación
+envía estos datos
+al gestor
+de validación.
+
+Este gestor
+actúa como
+el componente central
+del sistema.
+
+A partir de aquí,
+se realizan
+varias operaciones.
+
+En el paso dos,
+el sistema consulta
+los datos
+del ticket.
+
+Verifica su vigencia
+para asegurar
+que el código
+sea válido.
+
+Luego,
+en el paso tres,
+se valida
+al beneficiario.
+
+En este caso,
+al policía.
+
+Esto se hace
+comparando con
+la lista
+de acceso.
+
+Así se asegura
+que la persona
+esté autorizada.
+
+Si todo
+es correcto,
+en el paso cuatro,
+el sistema registra
+el consumo.
+
+Este registro
+se guarda
+en el historial.
+
+De esta forma,
+queda evidencia
+del uso
+del servicio.
+
+Finalmente,
+en el paso cinco,
+el sistema devuelve
+el resultado.
+
+Este resultado
+se muestra
+en la pantalla.
+
+Indicando si
+la validación
+fue aprobada
+o rechazada.
+
+En conjunto,
+este diagrama
+permite entender
+todo el proceso.
+
+Desde el escaneo
+del código QR
+hasta el resultado final.
+
+Asegurando control,
+validación de acceso
+y registro
+de información.`;
 
 let lineas = texto.split("\n").filter(l => l.trim() !== "");
 let index = 0;
