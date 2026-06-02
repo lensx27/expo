@@ -87,282 +87,116 @@
 <script>
 
 const texto = `
-El modelado de
- negocio se
-  enfoca en
-   entender cómo
-    funciona actualmente
-     el proceso de
-      entrega de
-       raciones
-        y cómo
-         interactúan
-          las entidades
-           externas con
-            el restaurante.
+> En el análisis 
+del Sistema de
+ Gestión de Tickets
+ Digitales se identificaron
+ los componentes 
+necesarios para 
+controlar el acceso 
+y el consumo 
+de raciones mediante
+ códigos QR. 
+Para organizar el 
+sistema se definieron 
+tres paquetes 
+principales: 
+Gestión de Acceso,
+ encargado de 
+la autenticación
+ y validación de tickets; Gestión de Consumo, 
+responsable del 
+registro de raciones entregadas; 
+y Administración y
+ Reportes, orientado
+ a la gestión de
+ beneficiarios y
+ generación de 
+estadísticas.
 
-Modelado del 
-Proceso de negocio            
+También se identificaron
+ las principales
+ clases de entidad.
+ La clase Usuario
+ almacena la 
+información de los beneficiarios y
+ del personal
+ autorizado.
+ La clase Ticket
+ contiene los 
+códigos QR utilizados
+ para el acceso.
+ La clase Consumo
+ registra cada 
+entrega de ración,
+ mientras que
+ la clase Ración
+ controla la
+ disponibilidad 
+de alimentos. 
+Además, la clase
+ Institución
+ representa a las organizaciones
+ con convenio activo
+ y la clase Reporte
+ consolida la
+ información estadística
+ necesaria para
+ la gestión y facturación.
 
-Este diagrama
-representa el
-modelo de negocio
-mediante casos
-de uso.
-
-El sistema
-está diseñado
-para gestionar
-el servicio
-de alimentación
-en una institución.
-
-Se muestra
-cómo los actores
-interactúan con
-el sistema
-y cómo sus
-acciones contribuyen
-a un objetivo
-común.
-
-Este objetivo
-es la generación
-de reportes.
-
-En primer lugar,
-se identifican
-cuatro actores
-principales.
-
-El oficial,
-el recepcionista,
-el encargado
-de cocina
-y el administrador.
-
-Cada uno
-cumple un rol
-específico dentro
-del proceso.
-
-El oficial
-registra su
-reserva en
-el padrón.
-
-También puede
-visualizar su
-ticket para
-acceder al servicio.
-
-El recepcionista
-valida el
-código QR
-del ticket.
-
-Esto asegura
-que solo personas
-autorizadas
-reciban atención.
-
-Por otro lado,
-el encargado
-de cocina
-gestiona el
-menú del día.
-
-También controla
-la entrega
-de raciones.
-
-Estas acciones
-garantizan un
-servicio eficiente
-y organizado.
-
-Mientras tanto,
-el administrador
-cumple un rol
-más estratégico.
-
-Se encarga
-de conciliar
-la facturación.
-
-Gestiona reportes
-de asistencia
-y actualiza
-el listado
-de oficiales.
-
-Un aspecto clave
-del diagrama
-es la relación
-de inclusión.
-
-Esto significa
-que todos
-los procesos
-están conectados.
-
-Cada acción
-realizada en
-el sistema
-genera información.
-
-Desde el registro
-hasta la entrega
-de raciones.
-
-Toda esta información
-se consolida
-en un reporte final.
-
-En conjunto,
-el sistema integra
-procesos operativos
-y administrativos.
-
-Su objetivo
-es optimizar
-la gestión
-del servicio.
-
-También mejorar
-el control
-y facilitar
-la toma
-de decisiones.
+En las realizaciones
+ de casos de
+ uso destaca
+ la validación 
+del acceso
+ mediante QR.
+ El proceso 
+inicia cuando
+ el recepcionista
+ escanea el código,
+ el sistema 
+verifica que
+ el ticket sea
+ válido y,
+ si cumple las
+ condiciones, registra
+ el consumo 
+correspondiente.
+ Asimismo, el sistema
+ permite generar 
+reportes, registrar
+ reservas y administrar usuarios.
 
 Finalmente,
-se obtiene información
-centralizada
-y confiable.
-
-por otro lado
- esta el
- Modelado de 
- Análisis del 
- negocio
-
-Este diagrama
-corresponde a
-un diagrama
-de robustez.
-
-Está enfocado
-en el proceso
-de validación
-de un código QR.
-
-Su objetivo
-es mostrar
-cómo interactúan
-la interfaz,
-la lógica
-del sistema
-y las entidades
-de datos.
-
-El flujo inicia
-en la pantalla
-de escaneo
-de la aplicación.
-
-Esta pantalla
-representa la interfaz
-con la que
-el usuario
-interactúa.
-
-En el paso uno,
-el usuario escanea
-el código QR.
-
-La aplicación
-envía estos datos
-al gestor
-de validación.
-
-Este gestor
-actúa como
-el componente central
-del sistema.
-
-A partir de aquí,
-se realizan
-varias operaciones.
-
-En el paso dos,
-el sistema consulta
-los datos
-del ticket.
-
-Verifica su vigencia
-para asegurar
-que el código
-sea válido.
-
-Luego,
-en el paso tres,
-se valida
-al beneficiario.
-
-En este caso,
-al policía.
-
-Esto se hace
-comparando con
-la lista
-de acceso.
-
-Así se asegura
-que la persona
-esté autorizada.
-
-Si todo
-es correcto,
-en el paso cuatro,
-el sistema registra
-el consumo.
-
-Este registro
-se guarda
-en el historial.
-
-De esta forma,
-queda evidencia
-del uso
-del servicio.
-
-Finalmente,
-en el paso cinco,
-el sistema devuelve
-el resultado.
-
-Este resultado
-se muestra
-en la pantalla.
-
-Indicando si
-la validación
-fue aprobada
-o rechazada.
-
-En conjunto,
-este diagrama
-permite entender
-todo el proceso.
-
-Desde el escaneo
-del código QR
-hasta el resultado final.
-
-Asegurando control,
-validación de acceso
-y registro
-de información.`;
+ el modelo 
+conceptual muestra 
+la relación entre
+ las entidades.
+ Un usuario puede
+ tener tickets
+ asociados, los 
+tickets generan 
+registros de consumo
+ y estos se 
+relacionan 
+con una ración 
+específica. 
+Las instituciones 
+agrupan usuarios
+ y los reportes
+ utilizan 
+la información 
+de consumo
+ para generar 
+indicadores de gestión
+. De esta manera
+, el modelo
+ representa de 
+forma clara 
+la estructura
+ y funcionamiento
+ general del sistema.
+`;
 
 let lineas = texto.split("\n").filter(l => l.trim() !== "");
 let index = 0;
