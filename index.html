@@ -6,6 +6,8 @@
 <title>Teleprompter Pro</title>
 
 <style>
+  * { box-sizing: border-box; }
+
   body {
     margin: 0;
     background: black;
@@ -16,7 +18,7 @@
     height: 100vh;
   }
 
-  /* CONTENEDOR PRINCIPAL */
+  /* ===== PANTALLA DE PRESENTACIÓN ===== */
   #pantalla {
     flex: 1;
     display: flex;
@@ -25,439 +27,265 @@
     overflow: hidden;
     text-align: center;
     padding: 20px;
+    position: relative;
   }
 
-  /* TEXTO */
   #texto {
     width: 100%;
     max-width: 900px;
   }
 
-  .linea {
-    opacity: 0.3;
-    font-size: clamp(20px, 4vw, 40px);
-    margin: 10px 0;
-    transition: all 0.3s ease;
-  }
-
-  .activa {
+  .palabra-actual {
     opacity: 1;
     color: lime;
-    font-size: clamp(28px, 6vw, 60px);
+    font-size: clamp(36px, 8vw, 90px);
     font-weight: bold;
+    line-height: 1.2;
   }
 
-  /* CONTROLES ABAJO */
+  /* ===== CUENTA REGRESIVA ===== */
+  #cuenta {
+    position: absolute;
+    inset: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: black;
+    font-size: clamp(80px, 20vw, 200px);
+    font-weight: bold;
+    color: orange;
+  }
+
+  /* ===== PANEL DE EDICIÓN DE TEXTO ===== */
+  #panelTexto {
+    background: #111;
+    padding: 12px;
+    border-bottom: 1px solid #333;
+  }
+
+  #panelTexto textarea {
+    width: 100%;
+    min-height: 90px;
+    resize: vertical;
+    background: #1a1a1a;
+    color: white;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+  }
+
+  #panelTexto .fila {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* ===== CONTROLES ABAJO ===== */
   #controles {
     background: #111;
     padding: 10px;
     text-align: center;
+    border-top: 1px solid #333;
+  }
+
+  .fila-controles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0;
   }
 
   button {
     padding: 10px 15px;
-    margin: 5px;
     font-size: 16px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
+    background: #333;
+    color: white;
   }
 
-  input {
-    width: 80px;
+  button:hover { background: #444; }
+
+  button.principal { background: #2e7d32; }
+  button.principal:hover { background: #388e3c; }
+
+  input, select {
+    padding: 8px;
     text-align: center;
     font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #1a1a1a;
+    color: white;
   }
+
+  input[type="number"] { width: 80px; }
+
+  label { font-size: 14px; color: #ccc; }
 </style>
 
 </head>
 <body>
 
+<div id="panelTexto">
+  <label for="entradaTexto">Pega o escribe tu texto aquí:</label>
+  <textarea id="entradaTexto" placeholder="Escribe o pega el texto que quieres leer en el teleprompter..."></textarea>
+  <div class="fila">
+    <button class="principal" onclick="cargarTexto()">📥 Cargar texto</button>
+    <label>Palabras por grupo:
+      <select id="tamGrupo">
+        <option value="2">2</option>
+        <option value="3" selected>3 (o menos si son largas)</option>
+      </select>
+    </label>
+    <span id="estadoCarga" style="color:#8f8;"></span>
+  </div>
+</div>
+
 <div id="pantalla">
   <div id="texto"></div>
+  <div id="cuenta"></div>
 </div>
 
 <div id="controles">
-  <button onclick="iniciar()">▶ Iniciar</button>
-  <button onclick="pausar()">⏸ Pausar</button>
-  <button onclick="reiniciar()">🔄 Reiniciar</button>
-  Velocidad(ms): <input type="number" id="velocidad" value="800">
+  <div class="fila-controles">
+    <button class="principal" onclick="iniciarConCuenta()">▶ Iniciar</button>
+    <button onclick="pausar()">⏸ Pausar</button>
+    <button onclick="reiniciar()">🔄 Reiniciar</button>
+  </div>
+  <div class="fila-controles">
+    <label>Velocidad (ms por grupo):
+      <input type="number" id="velocidad" value="800" min="100" step="50">
+    </label>
+    <label>Cuenta regresiva:
+      <select id="cuentaRegresiva">
+        <option value="3">3 s</option>
+        <option value="5" selected>5 s</option>
+        <option value="10">10 s</option>
+      </select>
+    </label>
+  </div>
 </div>
 
 <script>
 
-const texto = `
-✅ Subtema: Presentación
+const textoPorDefecto = `Pega o escribe tu propio texto arriba y presiona "Cargar texto" para comenzar.`;
 
-Contenido:
-“Hola,
- muy buenos 
-días/tardes. 
-Mi nombre es ... 
-y en este
- avance de
- portafolio 
-continúo
- desarrollando
- mi investigación
- sobre el ecosistema seleccionado:
- Lago Titicaca,
- el cual elegí 
-en mi trabajo
- anterior.”
-
-✅ Subtema: Objetivo
-
-Contenido:
-“El objetivo
- de esta 
-presentación
- es identificar,
- describir y
- explicar 
-los principales 
-impactos 
-ambientales
- que afectan
- a este
- importante 
-cuerpo de 
-agua, 
-detallando sus 
-causas,
- las zonas 
-más degradadas
- y las consecuencias ambientales,
- económicas
- y sociales
- que estos 
-problemas generan.”
-
-📌 ESTRUCTURA: CONTENIDO
-
-✅ Subtema: Datos generales del ecosistema
-
-Contenido:
-“El Lago
- Titicaca
- se ubica 
-en la 
-meseta 
-del Collao, 
-en la 
-región de Puno,
- frontera 
-entre 
-Perú y Bolivia.
- Es considerado
- el lago 
-navegable 
-más alto 
-del mundo,
- a más
- de 3 800 metros
- sobre 
-el nivel 
-del mar.
- Es un 
-ecosistema
- estratégico 
-y vital:
-es fuente
- de agua dulce,
- regula el clima
- de la zon,
- alberga una
- gran biodiversidad
- y es el 
-sustento principal
- de miles
- de familias
- que viven
- de la pesca,
- la agricultura
- y el turismo.”
-
-✅ Subtema: 
-Identifica los
- impactos ambientales
-
-
-“Los principales
- impactos
- ambientales 
-que afectan 
-al lago son:
-
-• Contaminación
- del agua:
- Es el problema
- más crítico, 
-por vertimiento
- de desechos.
-
-• Eutrofización: 
-Exceso de
- nutrientes
- que provoca
- crecimiento 
-excesivo de
- plantas acuáticas
- como el lirio.
-
-• Sobreexplotación
- de recursos: 
-Pesca excesiva
- que reduce 
-las poblaciones
- de peces 
-nativos.
-
-• Disminución 
-del nivel 
-del agua: 
-Por cambios 
-climáticos y 
-uso desmedido.
-
-• Acumulación de
- residuos sólidos:
- Basura en orillas
- y aguas 
-poco profundas.”
-
-✅ Subtema: Áreas
- degradadas (HAS)
-
-Contenido:
-“Según información
- del MINAM 
-y la Autoridad
- Nacional 
-del Agua, 
-las zonas 
-más degradadas 
-y afectadas
- se ubican en:
-
-• Las bahías 
-cercanas a la
- ciudad de Puno
- y Juliaca.
-
-• Las zonas 
-cercanas a 
-los ríos que 
-desembocan en
- el lago, 
-como el río
- Coata y 
-el río Ilave.
-
-• Las orillas
- donde se 
-concentran 
-asentamientos 
-humanos y 
-actividades 
-agrícolas.
-
-• También hay 
-degradación 
-severa en 
-las zonas 
-de los 
-humedales 
-circundantes.”
-
-✅ Subtema: 
-Causas de 
-los impactos
- ambientales 
-(Antrópicas 
-– Naturales)
-
-Contenido:
-“Las causas 
-se dividen 
-en dos 
-grupos:
-
-🔹 Causas Antrópicas (provocadas 
-por el 
-ser humano): 
-Son la causa
- principal.
- Destacan el 
-vertimiento de
- aguas residuales
- sin tratamiento,
- el uso 
-excesivo de
- fertilizantes y
- agroquímicos en
- la agricultura,
- la pesca 
-sin control,
- la acumulación
- de basura
- y 
-el crecimiento
- urbano
- desordenado.
- Todas estas
- actividades
- introducen
- sustancias 
-dañinas y 
-alteran la 
-calidad del agua.
-
-🔹 Causas Naturales:
- Factores como 
-el calentamiento global,
- la disminución
- de lluvias y
- la variabilidad
- climática, 
-que reducen
- los aportes 
-de agua, 
-y la erosión natural
- de las laderas
- que arrastra
- sedimentos 
-hacia el lago.”
-
-✅ Subtema: 
-Consecuencias del
- Impacto Ambiental
-“Los efectos
- negativos afectan
- a todo el
- ecosistema y
- a las personas:
-✅ Sobre seres vivos: Desaparición 
-de especies
- nativas como
- el pez 
-carachi y
- el mauri,
- disminución de
- aves acuáticas,
- muerte de plantas 
-y animales
- por falta
- de oxígeno 
-en el agua,
- y pérdida 
-de biodiversidad
- única de
- la zona
- altoandina.
-✅ Sobre el 
-entorno físico:
- Deterioro de 
-la calidad 
-del agua, 
-acumulación 
-de lodos,
- crecimiento
- descontrolado
- de plantas 
-acuáticas,
- reducción
- del volumen 
-de agua y
- pérdida de capacidad
- para regular
- el clima local.”
-
-📌 ESTRUCTURA: CIERRE
-
-✅ Subtema: Conclusiones y reflexiones
-
-Contenido:
-“En conclusión,
- el Lago Titicaca
- es un 
-patrimonio natural
- invaluable,
- pero se
- encuentra en
- riesgo crítico
- debido 
-principalmente a 
-nuestras 
-actividades. 
-He aprendido
- que el daño
- no solo afecta al
- agua, 
-sino que pone
- en peligro 
-la economía,
- la cultura
- y la salud 
-de toda 
-la población 
-que depende de él.
- Protegerlo 
-es urgente 
-y requiere 
-el compromiso
- de todos: 
-autoridades, 
-comunidades 
-y ciudadanos.`;
-
-let lineas = texto.split("\n").filter(l => l.trim() !== "");
+let grupos = [];
 let index = 0;
-let intervalo = null;
+let temporizador = null;
 
-function iniciar() {
-  if (intervalo) return;
-  mostrar();
+// ===== CARGAR Y AGRUPAR TEXTO =====
+function cargarTexto() {
+  pausar();
+  reiniciar();
+
+  let texto = document.getElementById("entradaTexto").value.trim();
+  if (!texto) texto = textoPorDefecto;
+
+  const tam = parseInt(document.getElementById("tamGrupo").value, 10);
+  grupos = agruparPalabras(texto, tam);
+
+  document.getElementById("estadoCarga").innerText =
+    `✅ ${grupos.length} grupos listos`;
 }
 
+// Agrupa palabras de a 2 o 3, pero reduce el grupo si las palabras son muy largas
+function agruparPalabras(texto, tamMax) {
+  const palabras = texto
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(" ")
+    .filter(p => p.length > 0);
+
+  const LIMITE_CARACTERES = 18; // ancho aproximado cómodo para pantalla
+  const resultado = [];
+  let actual = [];
+
+  for (const palabra of palabras) {
+    const posible = [...actual, palabra].join(" ");
+
+    const excedeCaracteres = posible.length > LIMITE_CARACTERES;
+    const excedeCantidad = actual.length >= tamMax;
+
+    if (actual.length > 0 && (excedeCaracteres || excedeCantidad)) {
+      resultado.push(actual.join(" "));
+      actual = [palabra];
+    } else {
+      actual.push(palabra);
+    }
+  }
+
+  if (actual.length > 0) resultado.push(actual.join(" "));
+
+  return resultado;
+}
+
+// ===== CUENTA REGRESIVA =====
+function iniciarConCuenta() {
+  if (temporizador) return; // ya está corriendo
+
+  if (grupos.length === 0) cargarTexto();
+  if (grupos.length === 0) return;
+
+  const segundos = parseInt(document.getElementById("cuentaRegresiva").value, 10);
+  const cuentaDiv = document.getElementById("cuenta");
+  cuentaDiv.style.display = "flex";
+
+  let restante = segundos;
+  cuentaDiv.innerText = restante;
+
+  const intervaloCuenta = setInterval(() => {
+    restante--;
+    if (restante > 0) {
+      cuentaDiv.innerText = restante;
+    } else {
+      clearInterval(intervaloCuenta);
+      cuentaDiv.style.display = "none";
+      mostrar();
+    }
+  }, 1000);
+}
+
+// ===== CONTROL DE REPRODUCCIÓN =====
 function pausar() {
-  clearTimeout(intervalo);
-  intervalo = null;
+  clearTimeout(temporizador);
+  temporizador = null;
 }
 
 function reiniciar() {
   pausar();
   index = 0;
   document.getElementById("texto").innerHTML = "";
+  document.getElementById("cuenta").style.display = "none";
 }
 
 function mostrar() {
-  if (index >= lineas.length) return;
-
-  let contenedor = document.getElementById("texto");
-
-  // mantener máximo 5 líneas visibles
-  if (contenedor.children.length >= 5) {
-    contenedor.removeChild(contenedor.firstChild);
+  if (index >= grupos.length) {
+    document.getElementById("texto").innerHTML =
+      '<div class="palabra-actual" style="color:#888;font-size:32px;">✅ Fin del texto</div>';
+    return;
   }
 
-  let div = document.createElement("div");
-  div.className = "linea";
-  div.innerText = lineas[index];
+  const contenedor = document.getElementById("texto");
+  contenedor.innerHTML = "";
 
+  const div = document.createElement("div");
+  div.className = "palabra-actual";
+  div.innerText = grupos[index];
   contenedor.appendChild(div);
-
-  // quitar activa anterior
-  let todas = document.querySelectorAll(".linea");
-  todas.forEach(el => el.classList.remove("activa"));
-
-  // activar última (centro visual)
-  div.classList.add("activa");
 
   index++;
 
-  let vel = document.getElementById("velocidad").value;
-  intervalo = setTimeout(mostrar, vel);
+  const vel = parseInt(document.getElementById("velocidad").value, 10) || 800;
+  temporizador = setTimeout(mostrar, vel);
 }
 
 </script>
